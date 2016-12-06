@@ -15,6 +15,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class PlayGround extends AppCompatActivity implements View.OnClickListener{
@@ -92,7 +93,7 @@ public class PlayGround extends AppCompatActivity implements View.OnClickListene
     public void onClick(View v){
         imageTag object = (imageTag)v.getTag();
 
-        Toast.makeText(getApplicationContext(), "object id" + object.getImageIndex() + " object iamge" + object.getImage(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "object id" + object.getImageIndex() + " object iamge" + object.getImage(), Toast.LENGTH_SHORT).show();
 
         //get adjacent tile
         int[] adjacentIds = new int[4];
@@ -101,7 +102,7 @@ public class PlayGround extends AppCompatActivity implements View.OnClickListene
 
             if(adjacentIds[i] > 0 && adjacentIds[i] <= ImageDiv*ImageDiv){
 
-                Toast.makeText(getApplicationContext(), "adjacent tile id: "+ adjacentIds[i], Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "adjacent tile id: "+ adjacentIds[i], Toast.LENGTH_SHORT).show();
 
                 ImageView tmpView = (ImageView)this.findViewById(adjacentIds[i]);
                 imageTag tmpOject = (imageTag)tmpView.getTag();
@@ -120,6 +121,12 @@ public class PlayGround extends AppCompatActivity implements View.OnClickListene
                 }
             }
         }
+        for(int i = 1 ; i < ImageDiv* ImageDiv; i++){
+            ImageView tmpview = (ImageView)this.findViewById(i);
+            if(((imageTag)tmpview.getTag()).getImageIndex() != i)   return;
+        }
+        Toast.makeText(getApplicationContext(), "finished", Toast.LENGTH_SHORT).show();
+
     }
 
 }
