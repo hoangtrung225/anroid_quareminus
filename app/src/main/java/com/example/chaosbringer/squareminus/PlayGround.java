@@ -3,6 +3,7 @@ package com.example.chaosbringer.squareminus;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,11 +19,13 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 public class PlayGround extends AppCompatActivity implements View.OnClickListener{
 
     private Bundle extras;
     private int ImageDiv;
     private long ImageId;
+    Bitmap nullBitmap;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_ground);
@@ -34,7 +37,9 @@ public class PlayGround extends AppCompatActivity implements View.OnClickListene
         ImageId = extras.getLong("imageToDisplay");
 
         try{
-            Bitmap originalImg = BitmapFactory.decodeResource(this.getResources(), (int)ImageId);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 3;
+            Bitmap originalImg = BitmapFactory.decodeResource(this.getResources(), (int)ImageId, options);
 
             DisplayMetrics displaymetrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -54,7 +59,7 @@ public class PlayGround extends AppCompatActivity implements View.OnClickListene
                 scaledHeight = ratioWidth * originalImg.getHeight();
             }
 
-            Bitmap ImagePlay = Bitmap.createScaledBitmap(originalImg, (int)scaledWidth, (int)scaledHeight, true);
+            final Bitmap ImagePlay = Bitmap.createScaledBitmap(originalImg, (int)scaledWidth, (int)scaledHeight, true);
 
             int cutHeight = ImagePlay.getHeight()/ImageDiv;
             int cutWidth = ImagePlay.getWidth()/ImageDiv;
@@ -82,10 +87,23 @@ public class PlayGround extends AppCompatActivity implements View.OnClickListene
 
                     }
                     else{
+
+                        Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+                        nullBitmap = Bitmap.createBitmap(cutWidth, cutHeight, conf); // this creates a MUTABLE bitmap
+
                         image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                        image.setImageBitmap(nullBitmap);
 
                         imageTag object = new imageTag(0, j + 1, i + 1);
                         image.setTag(object);
+                        image.setOnLongClickListener(new View.OnLongClickListener(){
+                            @Override
+                            public boolean onLongClick(View v) {
+                                ImageView helperImage = (ImageView)findViewById(R.id.helperimage);
+                                helperImage.setImageBitmap(ImagePlay);
+                                return true;
+                            }
+                        });
                         image.setOnClickListener(this);
 
                     }
@@ -96,8 +114,20 @@ public class PlayGround extends AppCompatActivity implements View.OnClickListene
                 rootTable.addView(row);
 
             }
+            ImageView helperImage = (ImageView) findViewById(R.id.helperimage);
+            helperImage.setOnClickListener(new View.OnClickListener(){
+                public void onClick(View v) {
+                    // Do something here
+                    ((ImageView) v).setVisibility(View.GONE);
+                }
+            });
+            helperImage.setImageBitmap(ImagePlay);
+            helperImage.setVisibility(View.GONE);
         }
         catch(Exception e){}
+
+//        add event listener onclick for helper image
+
 
     }
 
@@ -124,12 +154,22 @@ public class PlayGround extends AppCompatActivity implements View.OnClickListene
                     tmpOject.setImage(object.getImage());
                     tmpView.setTag(tmpOject);
                     tmpView.setImageBitmap(tmpOject.getImage());
+                    tmpView.setOnLongClickListener(null);
+//                    tmpView.setOnClickListener(this);
 
                     object.setImageIndex(0);
                     object.setImage(null);
-                    v.setTag(object);
-                    ((ImageView) v).setImageBitmap(null);
 
+                    v.setTag(object);
+                    ((ImageView) v).setImageBitmap(nullBitmap);
+                    v.setOnLongClickListener(new View.OnLongClickListener(){
+                        @Override
+                        public boolean onLongClick(View vi) {
+                            ImageView helperImage = (ImageView)findViewById(R.id.helperimage);
+                            helperImage.setVisibility(View.VISIBLE);
+                            return true;
+                        }
+                    });
                 }
             }
         }

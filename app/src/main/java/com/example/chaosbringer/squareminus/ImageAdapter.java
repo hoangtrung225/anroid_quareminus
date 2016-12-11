@@ -113,7 +113,7 @@ public class ImageAdapter extends BaseAdapter {
             // create a new Bitmap that stores a resized
             // version of the image we want to display.
             BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 4;
+            options.inSampleSize = 20;
             Bitmap thumb = BitmapFactory.decodeResource(myContext.getResources(), images[position], options);
 
             // store the resized thumb in a cache so we don't have to re-generate it
