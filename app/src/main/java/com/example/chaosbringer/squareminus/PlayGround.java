@@ -33,16 +33,28 @@ public class PlayGround extends AppCompatActivity implements View.OnClickListene
         ImageDiv = extras.getInt("titlesize");
         ImageId = extras.getLong("imageToDisplay");
 
-        Toast.makeText(getApplicationContext(), "Image divice unit: " + ImageDiv +" Image Id: "+ImageId, Toast.LENGTH_SHORT).show();
         try{
             Bitmap originalImg = BitmapFactory.decodeResource(this.getResources(), (int)ImageId);
 
             DisplayMetrics displaymetrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-            int screenHeight = displaymetrics.heightPixels;
-            int screenWidth = displaymetrics.widthPixels;
 
-            Bitmap ImagePlay = Bitmap.createScaledBitmap(originalImg, screenWidth, screenHeight, true);
+            int tableHeight = displaymetrics.heightPixels;
+            int tableWidth = displaymetrics.widthPixels;
+
+            float ratioHeight = (float)tableHeight/originalImg.getHeight();
+            float ratioWidth = (float)tableWidth/originalImg.getWidth();
+            float scaledHeight, scaledWidth;
+            if(ratioHeight < ratioWidth){
+                scaledHeight = tableHeight;
+                scaledWidth = ratioHeight * originalImg.getWidth();
+            }
+            else{
+                scaledWidth = tableWidth;
+                scaledHeight = ratioWidth * originalImg.getHeight();
+            }
+
+            Bitmap ImagePlay = Bitmap.createScaledBitmap(originalImg, (int)scaledWidth, (int)scaledHeight, true);
 
             int cutHeight = ImagePlay.getHeight()/ImageDiv;
             int cutWidth = ImagePlay.getWidth()/ImageDiv;
